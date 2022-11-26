@@ -1,2 +1,1 @@
-# TreeAlgorithms
- Amateur Trees
+# Amateur Trees
