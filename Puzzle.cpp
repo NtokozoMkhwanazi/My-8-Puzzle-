@@ -14,14 +14,18 @@ class node{
 
 void print(vector<vector<char>>grid){
     
+    cout<<"--------"<<endl;;
     if(!grid.empty()){
         for(vector<char> j: grid){
+            cout<<"|";
             for(char i:j){
                 cout<<i<<" ";
             }
+            cout<<"|";
             cout<<endl;
         }
     }
+    cout<<"--------"<<endl;
 }
 void createNode(node* Node,vector<vector<char>> grid){
 
@@ -32,55 +36,43 @@ void createNode(node* Node,vector<vector<char>> grid){
     Node->DOWN = nullptr;
 }
 
-void insertNode(node* root,queue<node*>nodes,queue<string>Moves){
+void insertNode(node* root,node* Node,string Move){
     
     if(root == NULL){
         return;
-    }
-      while(!Moves.empty()){
+     }
     
-        if(Moves.front() == "UP"){
+        if(Move == "UP"){
             if(root->UP != nullptr){
                 root = root->UP;
             }else if(root->UP == nullptr){
-                root->UP = nodes.front();
-                nodes.pop(); 
+                root->UP = Node; 
             }
-            Moves.pop();
         }
-    
-        if(Moves.front() == "LEFT"){
-            if(root->LEFT != nullptr){
-                root = root->LEFT;
-            }else if(root->LEFT == nullptr){
-                root->LEFT = nodes.front();
-                nodes.pop(); 
-            }
-            Moves.pop();
-        }
-    
-        if(Moves.front() == "DOWN"){
+        if(Move == "DOWN"){
             if(root->DOWN != nullptr){
                 root = root->DOWN;
             }else if(root->DOWN == nullptr){
-                root->DOWN = nodes.front();
-                nodes.pop(); 
+                root->DOWN = Node; 
             }
-            Moves.pop();
         }
         
-        if(Moves.front() == "RIGHT"){
+        if(Move == "LEFT"){
+            if(root->LEFT != nullptr){
+                root = root->LEFT;
+            }else if(root->LEFT == nullptr){
+                root->LEFT = Node; 
+            }
+        }
+            
+        if(Move == "RIGHT"){
             if(root->RIGHT != nullptr){
                 root = root->RIGHT;
             }else if(root->RIGHT == nullptr){
-                root->RIGHT = nodes.front();
-                nodes.pop(); 
+                root->RIGHT = Node; 
             }
-            Moves.pop();
         }
-    
-    }
-    
+        
 }
 
 vector<vector<char>> form_Grid(string puzzle,vector<vector<char>> grid){
@@ -168,36 +160,70 @@ map<string,node*> generateMoves(vector<vector<char>>grid,vector<vector<char>>cop
     }
     return map_Moves;        
 }
-int main(){
+map<string,node*> valid(map<string,node*>Move){
+    
+    map<string,node*>valid; 
+    
+    for(auto &j : Move){
+    
+        if(j.first == "LEFT"){
+            valid["LEFT"] = j.second;
+        }
+        else if(j.first ==  "RIGHT"){
+            valid["RIGHT"] =  j.second;
+        }
+        else if(j.first == "UP"){
+            valid["UP"] = j.second;
+        }
+        else if(j.first == "DOWN"){
+            valid["DOWN"] = j.second;
+        }
+    }  
+  
+    return valid;
+}
+bool verify(node* curr_Node,node* end){
+    
+    if(curr_Node->board == end->board){
+        return true;
+    }else{
+        return false;
+    }
 
+}
+map<string,node*> Validated(vector<vector<char>>grid){
+    
+    vector<vector<char>>copyOfgrid = grid;
+    
+    map<string,node*>Move = generateMoves(grid,copyOfgrid); 
+    
+    map<string,node*>valid_moves = valid(Move);
+    
+    return valid_moves; 
+}
+void SOLVE(node* root,node* end){
+         
+      //IM STILL THINKING OF THE ALGORITHM :)  
+}
+ 
+int main(){
+     
     string name = "12345#678";
-    string goal = "1#3425678";
+    string goal = "123#45678";
  
     vector<vector<char>>grid;
     vector<vector<char>>goal_Grid;
     
     grid = form_Grid(name,grid); 
     goal_Grid = form_Grid(goal,goal_Grid);
-    vector<vector<char>>copyOfgrid = grid;
-    node* root = new node();
-    node* end = new Node();
+   
+    node* end = new node();
     createNode(end,goal_Grid);
     
-    
-    map<string,node*>Move = generateMoves(grid,copyOfgrid); 
-  
-    
+    node* root = new node();
     createNode(root,grid);
     
-    
-    queue<node*>nodes;
-    queue<string>Moves;
-    for(auto &j : Move){
-        Moves.push(j.first); 
-        nodes.push(j.second);
-    }
-    
-    insertNode(root,nodes,Moves);
-   
-    
+    SOLVE(root,end);
+  
+
 return 0;}
