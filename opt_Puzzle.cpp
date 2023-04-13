@@ -275,7 +275,7 @@ int main(){
     node* root = new node();
     createNode(root,grid);
     
-    dfs(root->board);
+    dfs(root->board,end->board);
     
    
 return 0;}

@@ -99,7 +99,7 @@ map<string,node*> generateMoves(vector<vector<char>>grid,vector<vector<char>>cop
     for(int j=0;j<grid.size();j++){
         for(int i=0;i<grid.size();i++){
             if(grid[j][i] == '#'){
-                
+               
                 if(grid[j-1][i] != 0){
                     int currtemp = grid[j-1][i];
                     int temp = grid[j][i];
@@ -158,6 +158,7 @@ map<string,node*> generateMoves(vector<vector<char>>grid,vector<vector<char>>cop
     for(int j=0;j<grids.size();j++){  
         node* Node = new node();
         createNode(Node,grids[j]);
+        //insertNode();
         map_Moves[MOVES[j]] = Node;
     }
     return map_Moves;        
@@ -200,35 +201,86 @@ pair<int,int> emptySpot(vector<vector<char>>grid){
             if(grid[i][j] == '#'){
                  Co.first = i;
                  Co.second = j;      
-            }       
-         
+            }      
         }
     }
     return Co;
 }
 
- 
+int getMin(vector<pair<string, int>> distances)
+{
+
+    vector<int> List;
+    for (auto j : distances)
+    {
+        List.push_back(j.second);
+    }
+
+    return *min_element(List.begin(), List.end());
+}
+int getIndex(vector<pair<string, int>> distances, int K)
+{
+
+    vector<int> List;
+
+    for (auto j : distances)
+    {
+        List.push_back(j.second);
+    }
+    auto it = find(List.begin(), List.end(), K);
+
+    if (it != List.end())
+    {
+        int index = it - List.begin();
+        return index;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 pair<int,int> manhattanDistance(map<string,node*>Validated_Moves,pair<int,int>finalCo) {
+
     int distance = 0;
-    pair<int,int>Co;
-    for(auto &grid : Validated_Moves){
-       
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-       
-                   if((grid.second)->board[i][j] == '#'){
-                        distance = abs(i - finalCo.first) + abs(j - finalCo.second);
-                        if(distance <= 1){
-                            Co.first = i;
-                            Co.second = j;
-                        }
-                    }
-            
+    pair<int, int> Co;
+    pair<string, int> Ldistance;
+    vector<pair<string, int>> DistanceList;
+    vector<pair<int, int>> CoList;
+
+    for (auto &grid : Validated_Moves)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+
+                 if ((grid.second)->board[i][j] == '#')
+                 {
+
+                    distance = abs(i - finalCo.first) + abs(j - finalCo.second);
+                    Ldistance.first = grid.first;
+                    Ldistance.second = distance;
+                    cout << "Move on The Board: "<<Ldistance.first <<endl;
+                    cout<<"Distance of the move from the finalGoal: "<< Ldistance.second << endl;
+                    Co.first = i;
+                    Co.second = j;
+                    cout <<"Corrdinates of the Move: "<<"("<<Co.first << "," << Co.second <<")"<< endl;
+                    cout << endl;
+                    DistanceList.push_back(Ldistance);
+                    CoList.push_back(Co);
+                 }
             }
         }
     }
-    return Co;
+
+    int Min = getMin(DistanceList);
+    int index = getIndex(DistanceList, Min);
+    cout <<"The Coordinates of the move with minimum distance from finalGoal: "<<"("<<CoList[index].first << "," << CoList[index].second <<")"<< endl;
+    cout<<"***********************************************************"<<endl;
+    cout<<endl;
     
+    return CoList[index];
 }
 void DFS(node* START_STATE,node* END_STATE){
     
@@ -251,10 +303,12 @@ void DFS(node* START_STATE,node* END_STATE){
         pair<int,int>optimalCo = manhattanDistance( valid(T),emptySpot(END_STATE->board));
         
         for(auto &i : valid(T)){
-            
+                
             if((i.second)->board[optimalCo.first][optimalCo.second] == '#'){
                 node* newNode = i.second;
+                cout<<"LevelDepth"<<endl;
                 print(newNode->board);
+                cout<<endl;
                 S.push(newNode);
             }
         }
@@ -281,10 +335,15 @@ int main(){
     
     node* root = new node();
     createNode(root,grid);
+    cout<<"START STATE: ";
+    cout<<endl;
+    print(root->board);
+    cout<<endl;
     cout<<"END STATE: ";
     cout<<endl;
     print(end->board);
     cout<<"SOLUTION STATE:";
+    cout<<endl;
     cout<<endl;
     DFS(root,end);
     
