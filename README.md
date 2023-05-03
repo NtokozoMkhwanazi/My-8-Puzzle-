@@ -5,6 +5,6 @@ We are currently using vectors and Maps as our main containers in this project b
 Now the goal is to use a Hash_Map or faster containers for our code, although we have already defined most of the node characteristics in the node class
 
 Lasty the Seach algorithm i.e A* search, Depth-first Search or Deep iterative A* search.
-I started off with the Depth-first Saecrh because it was much easier to code But the altimate goal is to use the Deep iterative A* search algorithm
+I started off with the Depth-first Search because it was much easier to code But the ultimate goal is to use the Deep iterative A* search algorithm
 
 this is an approach to 8-puzzle problem by junior Dev.
