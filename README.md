@@ -1,8 +1,10 @@
-#AMATEUR ALGORITHMS BY AN AMATEUR DEV :) 
+Solving 8-Puzlze in C++
 
-let us start by creating a basic tree just for understanding how we can represent generated grids as nodes.
-then lastly the 8-Puzzle algorithm solver.
 
-so i decided to use the manhattan distance to estimate the optimal grid that should be taken into account it works but not for all puzzles or for rather complex puzzles this means i should either change the way i estimate the distance between two points rather than use manhattan or optimize the manhattan distance part and pair it with another estimator.
-This solver is still in its early stages of development but feel free to checkout the opt_Puzzle.cpp :)
+We are currently using vectors and Maps as our main containers in this project but that was to get the project up and running.
+Now the goal is to use a Hash_Map or faster containers for our code, although we have already defined most of the node characteristics in the node class
 
+Lasty the Seach algorithm i.e A* search, Depth-first Search or Deep iterative A* search.
+I started off with the Depth-first Saecrh because it was much easier to code But the altimate goal is to use the Deep iterative A* search algorithm
+
+this is an approach to 8-puzzle problem by junior Dev.
