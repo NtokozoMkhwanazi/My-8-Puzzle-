@@ -374,59 +374,73 @@ void printTree(node* root) {
         return;
     }
 
-    cout << "Depth: " << root->depth << endl;
-    cout << "Move: " << root->move << endl;
-    print(root->board);
+    if (root->parent != nullptr) {
+        cout << "Move: " << root->move << endl;
+        cout << "Depth: "<<root->depth <<endl;
+        print(root->board);
+    } else {
+        cout << "Start Board:" << endl;
+        print(root->board);
+    }
 
     if (root->LEFT != nullptr) {
-        cout << "Left:" << endl;
         printTree(root->LEFT);
     }
     if (root->UP != nullptr) {
-        cout << "Up:" << endl;
         printTree(root->UP);
     }
     if (root->RIGHT != nullptr) {
-        cout << "Right:" << endl;
         printTree(root->RIGHT);
     }
     if (root->DOWN != nullptr) {
-        cout << "Down:" << endl;
         printTree(root->DOWN);
     }
 }
 
 int main() {
 
-	//string name = "#12345678";
-    //string goal = "31245867#";
-    
-    //complex
-   string name = "15#764238";
-   string goal = "82#547361";
 
-    vector<vector<char>> grid;
-    vector<vector<char>> goal_Grid;
+    // Load boards from a file
+    ifstream file("boards.txt");
+    if (!file) {
+        cerr << "Error opening file: boards.txt" << endl;
+        return 1;
+    }
 
-    grid = form_Grid(name, grid);
-    goal_Grid = form_Grid(goal, goal_Grid);
+    string line;
+    int puzzleNumber = 1;
 
-    cout << "Goal Board:" << endl;
-    print(goal_Grid);
+    while (getline(file, line)) {
+        istringstream iss(line);
+        string startBoard, endBoard;
 
-    cout << "Start Board:" << endl;
-    print(grid);
+        if (iss >> startBoard >> endBoard) {
+            vector<vector<char>> startGrid = form_Grid(startBoard, vector<vector<char>>());
+            vector<vector<char>> goalGrid = form_Grid(endBoard, vector<vector<char>>());
 
-    node* solution = AStarSearch(grid, goal_Grid);
+            cout << "Puzzle #" << puzzleNumber << endl;
 
-    if (solution != nullptr) {
-        cout << "Solution Path:" << endl;
-        printTree(solution);
-    } else {
-        cout << "No solution" << endl;
+            cout << "Start Board:" << endl;
+            print(startGrid);
+
+            cout << "Goal Board:" << endl;
+            print(goalGrid);
+
+            node* solution = AStarSearch(startGrid, goalGrid);
+
+            if (solution != nullptr) {
+                cout << "Solution Path:" << endl;
+                printTree(solution);
+            } else {
+                cout << "No solution" << endl;
+            }
+
+            ++puzzleNumber;
+        }
     }
 
     return 0;
 }
+
 
 

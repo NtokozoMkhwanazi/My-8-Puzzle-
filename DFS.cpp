@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
-#include<thread>
-#include <mutex> // Include the mutex header for thread synchronization
+
 
 using namespace std;
 
@@ -285,21 +284,46 @@ void printTree(node* root) {
 
 
 int main() {
-			
-		string startBoard = "1234#5678";
-		string goalBoard =  "#13425678";
-        
-        	vector<vector<char>> grid = form_Grid(startBoard, vector<vector<char>>());
-        	vector<vector<char>> goalGrid = form_Grid(goalBoard, vector<vector<char>>());
-		
-			node* solutionNode = dfs(grid, goalGrid);  // Or dfs(grid, goalGrid);
-			if (solutionNode != nullptr) {
-    			cout << "Solution:" << endl;
-    			printTree(solutionNode);
-			} else {
-    			cout << "No solution found." << endl;
-			}
 
+
+    // Load boards from a file
+    ifstream file("boards.txt");
+    if (!file) {
+        cerr << "Error opening file: boards.txt" << endl;
+        return 1;
+    }
+
+    string line;
+    int puzzleNumber = 1;
+
+    while (getline(file, line)) {
+        istringstream iss(line);
+        string startBoard, endBoard;
+
+        if (iss >> startBoard >> endBoard) {
+            vector<vector<char>> startGrid = form_Grid(startBoard, vector<vector<char>>());
+            vector<vector<char>> goalGrid = form_Grid(endBoard, vector<vector<char>>());
+
+            cout << "Puzzle #" << puzzleNumber << endl;
+
+            cout << "Start Board:" << endl;
+            print(startGrid);
+
+            cout << "Goal Board:" << endl;
+            print(goalGrid);
+
+            node* solution = dfs(startGrid, goalGrid);
+
+            if (solution != nullptr) {
+                cout << "Solution Path:" << endl;
+                printTree(solution);
+            } else {
+                cout << "No solution" << endl;
+            }
+
+            ++puzzleNumber;
+        }
+    }
 
     return 0;
 }
