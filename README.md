@@ -6,7 +6,9 @@ Algorithms to Solve 8-Puzlze.
 
 3.DFS.cpp it uses the Depth-First-Search algorithm to solve the puzzle. this algorithm is able to solve easy puzzles but when it comes to intermediate and complex puzzles it takes alot of time and memory compared to the Breadth-First-search algorithm.
 
-4.We the Conclude that even though BFS and DFS are commmonly used to solve puzzle problems it is much better and time saving to use the A * search algorithm since it uses some sophisticated heuristics instead of BFS and DFS which simply rely on exploring the nodes till it arrives to some form of conculsion. This has been an amazing project has helped me understand algorithms better and efficiency that is why i even chose to use C++ so that i could learn to use  better memory management techniques.
+4.DIA.cpp it uses the Deepening iterative A star search to solve te puzzle. this algorithm is an extension of the A star search algorithm but its disadvatange is that it is memeory-intensive and often be inefficient when it comes to more complex puzzle but it uses the threshold which limits it from exploring too deep.
+
+5.We the Conclude that even though BFS and DFS are commmonly used to solve puzzle problems it is much better and time saving to use the A * search algorithm since it uses some sophisticated heuristics instead of BFS and DFS which simply rely on exploring the nodes till it arrives to some form of conculsion. This has been an amazing project has helped me understand algorithms better and efficiency that is why i even chose to use C++ so that i could learn to use  better memory management techniques.
 
 This is the end of this project :) .
  
