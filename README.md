@@ -1,4 +1,4 @@
-Algorithms to Solve 8-Puzlze.
+#Algorithms to Solve 8-PuzzLe.
 
 1.Astar.cpp it uses the A * search algorithm to solve the puzzle. this algorithm is able to solve the most complex puzzles and at a considerably fast rate than the traditional algorithms i.e Breadth-first-search and Depth-first-search.
 
