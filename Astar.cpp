@@ -1,166 +1,63 @@
-#include <bits/stdc++.h>
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <queue>
+#include <map>
 
 using namespace std;
 
-class node
-{
-
+class Node {
 public:
     vector<vector<char>> board;
-    vector<node *> neighbors;
-    node *parent;
-    node *LEFT;
-    node *RIGHT;
-    node *UP;
-    node *DOWN;
-    int depth;
+    Node* parent;
+    int g, h, f;
     string move;
-    int costMove;
-    int g;
-    int h;
-    int f;
 };
 
-void createNode(node* Node,vector<vector<char>>grid){
-	
+void createNode(Node* Node, const vector<vector<char>>& grid) {
     Node->board = grid;
-    Node->neighbors; // not yet generated
     Node->parent = nullptr;
-    Node->LEFT = nullptr;
-    Node->RIGHT = nullptr;
-    Node->UP = nullptr;
-    Node->DOWN = nullptr;
-    Node->move;
-    Node->depth;
-    Node->costMove;
-    Node->g;
-    Node->h;
-    Node->f;
-    
+    Node->g = Node->h = Node->f = 0;
 }
 
-struct CompareNodes {
-    bool operator()(const node* node1, const node* node2) const {
-  
-        // Compare nodes based on their f values
-        // Smaller f value has higher priority
-  
-        return node1->f > node2->f;
-    }
-};
-
-void print(vector<vector<char>> grid)
-{
-    
-    if (!grid.empty())
-    {
-        cout <<"--------"<< endl;
-        for (vector<char> j : grid)
-        {
-            cout <<"|";
-            for (char i : j)
-            {
-                cout << i << "|";
-            }
-            cout << endl;
-        }
-         cout << "--------" << endl;
-    }
-   
-}
-
-void insertNode(node *root, node *Node, string Move, int depth,int cost) {
-    if (root == NULL) {
-        return;
-    }
-
-    if (Move == "UP") {
-        if (root->UP != nullptr) {
-            insertNode(root->UP, Node, Move, depth,cost);
-        } else {
-            root->UP = Node;
-            root->UP->depth = depth;
-            root->UP->move = Move;
-            root->UP->costMove = cost;
-        }
-    } else if (Move == "DOWN") {
-        if (root->DOWN != nullptr) {
-            insertNode(root->DOWN, Node, Move, depth,cost);
-        } else {
-            root->DOWN = Node;
-            root->DOWN->depth = depth;
-            root->DOWN->move = Move;
-            root->DOWN->costMove = cost;
-        }
-    } else if (Move == "LEFT") {
-        if (root->LEFT != nullptr) {
-            insertNode(root->LEFT, Node, Move, depth,cost);
-        } else {
-            root->LEFT = Node;
-            root->LEFT->depth = depth;
-            root->LEFT->move = Move;
-            root->LEFT->costMove = cost;
-        }
-    } else if (Move == "RIGHT") {
-        if (root->RIGHT != nullptr) {
-            insertNode(root->RIGHT, Node, Move, depth,cost);
-        } else {
-            root->RIGHT = Node;
-            root->RIGHT->depth = depth;
-            root->RIGHT->move = Move;
-            root->RIGHT->costMove = cost;
-        }
-    }
-}
-
-pair<int, int> emptySpot(vector<vector<char>> grid)
-{
-    pair<int, int> Co;
-    for (int i = 0; i < grid.size(); i++)
-    {
-        for (int j = 0; j < grid.size(); j++)
-        {
-
-            if (grid[i][j] == '#')
-            {
-                Co.first = i;
-                Co.second = j;
+pair<int, int> emptySpot(const vector<vector<char>>& grid) {
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[i].size(); j++) {
+            if (grid[i][j] == '#') {
+                return {i, j};
             }
         }
     }
-    return Co;
+    return {-1, -1};  // Should never happen
 }
 
-vector<vector<char>> form_Grid(string puzzle, vector<vector<char>> grid)
-{
-
-    int N = 3;
+vector<vector<char>> formGrid(const string& puzzle) {
+    vector<vector<char>> grid(3, vector<char>(3));
     int count = 0;
-    for (int j = 0; j < N; j++)
-    {
-        vector<char> rows;
-        for (int i = 0; i < N; i++)
-        {
-            rows.push_back(puzzle[count]);
-            count++;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            grid[i][j] = puzzle[count++];
         }
-        grid.push_back(rows);
     }
     return grid;
 }
 
+struct CompareNodes {
+    bool operator()(const Node* node1, const Node* node2) const {
+        return node1->f > node2->f;
+    }
+};
 
-vector<node*> generateMoves(const vector<vector<char>>& grid, node* currentNode) {
-    
-    // Find the empty spot in the grid
-    pair<int,int> empty =  emptySpot(currentNode->board);
+vector<Node*> generateMoves(const vector<vector<char>>& grid, Node* currentNode) {
+    pair<int, int> empty = emptySpot(currentNode->board);
     int emptyRow = empty.first;
     int emptyCol = empty.second;
-    
-    vector<node*> nodes;
 
-    vector<vector<int>> directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
-    vector<string> MOVES = { "UP", "DOWN", "LEFT", "RIGHT" };
+    vector<Node*> nodes;
+    vector<vector<int>> directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    vector<string> MOVES = {"UP", "DOWN", "LEFT", "RIGHT"};
 
     for (int i = 0; i < 4; i++) {
         int newRow = emptyRow + directions[i][0];
@@ -170,9 +67,10 @@ vector<node*> generateMoves(const vector<vector<char>>& grid, node* currentNode)
             vector<vector<char>> newGrid = grid;
             swap(newGrid[emptyRow][emptyCol], newGrid[newRow][newCol]);
 
-            node* newNode = new node();
+            Node* newNode = new Node();
             createNode(newNode, newGrid);
             newNode->move = MOVES[i];
+            newNode->parent = currentNode;
             nodes.push_back(newNode);
         }
     }
@@ -180,186 +78,37 @@ vector<node*> generateMoves(const vector<vector<char>>& grid, node* currentNode)
     return nodes;
 }
 
-
-
-node* createTree(vector<node *> Validated_Moves,node *start) {
-    
-    
-    for (auto grid : Validated_Moves) {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (grid->board[i][j] == '#') {
-                    insertNode(start, grid, grid->move, grid->depth,grid->costMove);
-                }
-            }
-        }
-    }
-    return start;
-
-}
-
-
-node* insert(node* currentNode,node* copyNode,node* start){
-
-         vector<node *> T = generateMoves(currentNode->board,currentNode);
-		 
-         return createTree(T,start);
-
-}
-
-int startTocurrent(node *currBoard, node *startBoard)
-{
-
-    int misMatch = 0;
-
-    for (int i = 0; i < currBoard->board.size(); i++)
-    {
-        for (int j = 0; j < currBoard->board.size(); j++)
-        {
-            if (currBoard->board[i][j] != startBoard->board[i][j])
-            {
-                misMatch = misMatch + 1; 
-            }
-        }
-    }
-   
-    return misMatch;
-}
-
-int currentTofinal(node *currBoard, node *finBoard)
-{
-
-    int misMatch = 0;
-    
-    for (int i = 0; i < currBoard->board.size(); i++)
-    {
-        for (int j = 0; j < currBoard->board.size(); j++)
-        {
-            if (currBoard->board[i][j] != finBoard->board[i][j])
-            {
-                misMatch = misMatch + 1;
-            }
-        }
-    }
-
-    return misMatch;
-}
-
-int calculateLinearConflict(vector<vector<char>> board) {
-    int linearConflict = 0;
-
-    // check rows for linear conflict
-    for (int i = 0; i < 3; i++) {
-        int max = -1;
-        for (int j = 0; j < 3; j++) {
-            int tile = board[i][j];
-            if (tile != '#' && (tile - 1) / 3 == i) {
-                if (tile > max) {
-                    max = tile;
-                } else {
-                    linearConflict += 2;
-                }
-            }
-        }
-    }
-
-    // check columns for linear conflict
-    for (int j = 0; j < 3; j++) {
-        int max = -1;
-        for (int i = 0; i < 3; i++) {
-            int tile = board[i][j];
-            if (tile != '#' && tile % 3 == j + 1) {
-                if (tile > max) {
-                    max = tile;
-                } else {
-                    linearConflict += 2;
-                }
-            }
-        }
-    }
-
-    return linearConflict;
-}
-
-int Manhattan_End_distance(node* current,node* end){
-
-	pair<int,int>end_xy = emptySpot(end->board);
-	pair<int,int>current_xy =  emptySpot(current->board);
-	
-	
-	int end_i = end_xy.first;
-	int end_j = end_xy.second;
-	
-	int i = current_xy.first;
-	int j = current_xy.second; 
-
-    return abs(i - end_i) + abs(j - end_j);
-
-}
-int Manhattan_Start_distance(node* current,node* start) {
-	
-	pair<int,int>start_xy = emptySpot(start->board);
-	pair<int,int>current_xy =  emptySpot(current->board);
-	
-	int start_i = start_xy.first;
-	int start_j = start_xy.second;
-	
-	int i = current_xy.first;
-	int j = current_xy.second; 
-        
-    return abs(i - start_i) + abs(j - start_j);
- }
-
-/// work in progress.......
-bool isGoalState(const std::vector<std::vector<char>>& board, const std::vector<std::vector<char>>& goalBoard) {
+bool isGoalState(const vector<vector<char>>& board, const vector<vector<char>>& goalBoard) {
     return board == goalBoard;
 }
 
-vector<string> reverse(vector<string>& moves) {
-    vector<string> reversedMoves;
-    for (int i = moves.size() - 1; i >= 0; --i) {
-        reversedMoves.push_back(moves[i]);
-    }
-    return reversedMoves;
-}
-
-node* AStarSearch(vector<vector<char>>& startBoard, vector<vector<char>>& goalBoard) {
-
-    priority_queue<node*, vector<node*>, CompareNodes> openList;
+Node* AStarSearch(vector<vector<char>>& startBoard, vector<vector<char>>& goalBoard) {
+    priority_queue<Node*, vector<Node*>, CompareNodes> openList;
     map<vector<vector<char>>, bool> visited;
 
-    node* startNode = new node();
-    node* goalNode = new node();
-
-    createNode(goalNode, goalBoard);
+    Node* startNode = new Node();
     createNode(startNode, startBoard);
-
-    startNode->h = Manhattan_Start_distance(startNode, goalNode);
+    startNode->h = abs(emptySpot(startBoard).first - emptySpot(goalBoard).first) + abs(emptySpot(startBoard).second - emptySpot(goalBoard).second);
     startNode->f = startNode->g + startNode->h;
-    startNode->depth = 0;
 
     openList.push(startNode);
-    node* solutionNode = nullptr;
 
     while (!openList.empty()) {
-        node* currentNode = openList.top();
+        Node* currentNode = openList.top();
         openList.pop();
 
         if (isGoalState(currentNode->board, goalBoard)) {
-            solutionNode = currentNode;
-            break;
+            return currentNode;
         }
 
         visited[currentNode->board] = true;
 
-        for (node* nextMove : generateMoves(currentNode->board, currentNode)) {
+        for (Node* nextMove : generateMoves(currentNode->board, currentNode)) {
             nextMove->g = currentNode->g + 1;
-            nextMove->h = Manhattan_Start_distance(nextMove, goalNode);
+            nextMove->h = abs(emptySpot(nextMove->board).first - emptySpot(goalBoard).first) + abs(emptySpot(nextMove->board).second - emptySpot(goalBoard).second);
             nextMove->f = nextMove->g + nextMove->h;
 
             if (visited.find(nextMove->board) == visited.end()) {
-                insertNode(currentNode, nextMove, nextMove->move, currentNode->depth + 1, nextMove->costMove);
-                nextMove->parent = currentNode;
                 openList.push(nextMove);
             } else {
                 delete nextMove;
@@ -367,80 +116,117 @@ node* AStarSearch(vector<vector<char>>& startBoard, vector<vector<char>>& goalBo
         }
     }
 
-    return solutionNode;
+    return nullptr;
 }
-void printTree(node* root) {
-    if (root == nullptr) {
+
+void drawBoard(sf::RenderWindow &window, vector<vector<char>> &board) {
+    const int tileSize = 100;
+    sf::Font font;
+    if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf")) {
+        std::cerr << "Error loading font!" << std::endl;
         return;
     }
 
-    if (root->parent != nullptr) {
-        cout << "Move: " << root->move << endl;
-        cout << "Depth: "<<root->depth <<endl;
-        print(root->board);
-    } else {
-        cout << "Start Board:" << endl;
-        print(root->board);
-    }
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
+            for (int i = 1; i < 3; ++i) {
+                sf::Vertex line[] = {
+                    sf::Vertex(sf::Vector2f(i * tileSize, 0), sf::Color::White),
+                    sf::Vertex(sf::Vector2f(i * tileSize, window.getSize().y), sf::Color::White)
+                };
+                window.draw(line, 2, sf::Lines);
+                sf::Vertex line2[] = {
+                    sf::Vertex(sf::Vector2f(0, i * tileSize), sf::Color::White),
+                    sf::Vertex(sf::Vector2f(window.getSize().x, i * tileSize), sf::Color::White)
+                };
+                window.draw(line2, 2, sf::Lines);
+            }
+            tile.setPosition(j * tileSize, i * tileSize);
 
-    if (root->LEFT != nullptr) {
-        printTree(root->LEFT);
+            if (board[i][j] == '#') {
+                tile.setFillColor(sf::Color::Red);  // Empty space
+            } else {
+                tile.setFillColor(sf::Color::Black);  // Numbered tiles
+            }
+
+            window.draw(tile);
+
+            if (board[i][j] != '#') {
+                sf::Text text;
+                text.setFont(font);
+                text.setString(std::string(1, board[i][j]));
+                text.setCharacterSize(60);
+                text.setFillColor(sf::Color::White);
+                text.setPosition(j * tileSize + tileSize / 4, i * tileSize + tileSize / 4);
+                                  
+                window.draw(text);
+            }
+        }
     }
-    if (root->UP != nullptr) {
-        printTree(root->UP);
+}
+
+void displaySolution(sf::RenderWindow &window, Node *solution) {
+    vector<Node *> path;
+    for (Node *curr = solution; curr != nullptr; curr = curr->parent) {
+        path.push_back(curr);
     }
-    if (root->RIGHT != nullptr) {
-        printTree(root->RIGHT);
-    }
-    if (root->DOWN != nullptr) {
-        printTree(root->DOWN);
+    std::reverse(path.begin(), path.end());
+
+    const int delay = 600; // Milliseconds
+
+    // Iterate through the solution path and display each board state with delay
+    for (auto &step : path) {
+        window.clear(sf::Color::White);  // Clear window
+        drawBoard(window, step->board);  // Draw the current board state
+        window.display();  // Refresh the window
+
+        // Wait for a specified delay
+        sf::sleep(sf::milliseconds(delay));
+
+        // Check for any window events (e.g., closing)
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();  // Close window if requested
+            }
+        }
     }
 }
 
 int main() {
+    // Start and goal grid for 3x3 puzzle
+    //1 2 3
+    //4 5 6
+    //7 8 #
+    
+    vector<vector<char>> startGrid = formGrid("#12345678");
+    vector<vector<char>> goalGrid = formGrid("12345678#");
 
+    sf::RenderWindow window(sf::VideoMode(300, 300), "Puzzle Solver");
+    window.setFramerateLimit(60);
 
-    // Load boards from a file
-    ifstream file("boards.txt");
-    if (!file) {
-        cerr << "Error opening file: boards.txt" << endl;
-        return 1;
-    }
+    Node* solution = AStarSearch(startGrid, goalGrid);
 
-    string line;
-    int puzzleNumber = 1;
-
-    while (getline(file, line)) {
-        istringstream iss(line);
-        string startBoard, endBoard;
-
-        if (iss >> startBoard >> endBoard) {
-            vector<vector<char>> startGrid = form_Grid(startBoard, vector<vector<char>>());
-            vector<vector<char>> goalGrid = form_Grid(endBoard, vector<vector<char>>());
-
-            cout << "Puzzle #" << puzzleNumber << endl;
-
-            cout << "Start Board:" << endl;
-            print(startGrid);
-
-            cout << "Goal Board:" << endl;
-            print(goalGrid);
-
-            node* solution = AStarSearch(startGrid, goalGrid);
-
-            if (solution != nullptr) {
-                cout << "Solution Path:" << endl;
-                printTree(solution);
-            } else {
-                cout << "No solution" << endl;
+    if (solution != nullptr) {
+        while (window.isOpen()) {
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                }
             }
 
-            ++puzzleNumber;
+            // Display the solution step by step
+            window.clear(sf::Color::White);
+            displaySolution(window, solution);
+            window.display();
+        
+        
         }
+    } else {
+        std::cout << "No solution found." << std::endl;
     }
 
     return 0;
 }
-
-
-
