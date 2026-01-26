@@ -5,7 +5,10 @@ This project is a **C++ implementation of the classic 8-Puzzle problem**, solved
 The application automatically finds the optimal solution and displays each step graphically in a window.
 
 ---
+## Screenshots
+<img width="1366" height="768" alt="VISUAL" src="https://github.com/user-attachments/assets/85075aae-ec12-4b6b-920e-c86f09c7fdf9" />
 
+---
 ## 📌 Features
 
 - A* Search Algorithm
