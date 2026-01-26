@@ -1,4 +1,4 @@
-# 🧩 8-Puzzle Solver (A* Algorithm with SFML)
+<img width="1366" height="768" alt="Screenshot from 2026-01-26 12-55-13" src="https://github.com/user-attachments/assets/2bc96fab-7a10-440d-9f72-a0348aff6e8c" /># 🧩 8-Puzzle Solver (A* Algorithm with SFML)
 
 This project is a **C++ implementation of the classic 8-Puzzle problem**, solved using the **A\* search algorithm** and visualized using **SFML**.
 
@@ -6,7 +6,9 @@ The application automatically finds the optimal solution and displays each step 
 
 ---
 ## Screenshots
-<img width="1366" height="768" alt="VISUAL" src="https://github.com/user-attachments/assets/85075aae-ec12-4b6b-920e-c86f09c7fdf9" />
+
+![Uploading<img width="1366" height="768" alt="Screenshot from 2026-01-26 12-55-22" src="https://github.com/user-attachments/assets/e3ae80d7-7887-4ae3-8198-1703d6858e99" />
+ Screenshot from 2026-01-26 12-55-13.png…]()
 
 ---
 ## 📌 Features
