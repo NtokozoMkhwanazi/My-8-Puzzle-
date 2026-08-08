@@ -9,11 +9,6 @@ The application automatically finds the optimal solution and displays each step 
 <img width="1092" height="614" alt="output" src="https://github.com/user-attachments/assets/29d497a8-ce56-42b2-b957-2890004980e8" />
 
 
-## Screenshots
-
-<img width="1366" height="768" alt="Screenshot from 2026-01-26 12-55-22" src="https://github.com/user-attachments/assets/e3ae80d7-7887-4ae3-8198-1703d6858e99" />
-
-
 ---
 ## 📌 Features
 
